@@ -9,9 +9,10 @@ type Token struct {
 	Type, Lexeme, Literal string
 }
 
-func lexer(textContent string) []Token {
+func lexer(textContent string) ([]Token, bool) {
 	// token_type lexeme literal
 	tokens := []Token{}
+	hadError := false
 	for i := 0; i < len(textContent); i++ {
 		switch c := textContent[i]; c {
 		case '(':
@@ -36,10 +37,13 @@ func lexer(textContent string) []Token {
 			tokens = append(tokens, Token{"SLASH", "/", "null"})
 		case '*':
 			tokens = append(tokens, Token{"STAR", "*", "null"})
+		default:
+			hadError = true
+			fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", c) // currently just one line
 		}
 	}
 	tokens = append(tokens, Token{"EOF", "", "null"})
-	return tokens
+	return tokens, hadError
 }
 
 func main() {
@@ -63,8 +67,11 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
 		os.Exit(1)
 	}
-	tokens := lexer(string(fileContents))
+	tokens, hadError := lexer(string(fileContents))
 	for _, t := range tokens {
 		fmt.Printf("%s %s %s\n", t.Type, t.Lexeme, t.Literal)
+	}
+	if hadError {
+		os.Exit(65)
 	}
 }
