@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"unicode"
 )
 
 type Token struct {
@@ -19,6 +20,14 @@ func peek(textContent string, i int) byte {
 
 func isDigit(c byte) bool {
 	return c >= '0' && c <= '9'
+}
+
+func isAlpha(c rune) bool {
+	return unicode.IsLetter(c) || c == '_'
+}
+
+func isAlphaNumeric(c rune) bool {
+	return isAlpha(c) || unicode.IsDigit(c)
 }
 
 func numTransform(numberpart string) string {
@@ -41,6 +50,16 @@ func lexer(textContent string) ([]Token, bool) {
 	lcnt := 1
 	for i := 0; i < tlen; {
 		c := textContent[i]
+		if isAlpha(rune(c)) {
+			start := i
+			for i < tlen && isAlphaNumeric(rune(textContent[i])) {
+				i += 1
+			}
+			end := i
+			variablePart := textContent[start:end]
+			tokens = append(tokens, Token{"IDENTIFIER", variablePart, "null"})
+			continue
+		}
 		if isDigit(c) {
 			start := i
 			cntDecimal := 0
