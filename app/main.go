@@ -20,8 +20,26 @@ func lexer(textContent string) ([]Token, bool) {
 	// token_type lexeme literal
 	tokens := []Token{}
 	hadError := false
-	for i := 0; i < len(textContent); {
-		switch c := textContent[i]; c {
+	tlen := len(textContent)
+	for i := 0; i < tlen; {
+		c := textContent[i]
+		if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
+			i += 1
+			continue
+		}
+		if i+1 < tlen && c == '/' && textContent[i+1] == '/' {
+			for i < tlen && textContent[i] != '\n' {
+				i += 1
+			}
+			if i < tlen && textContent[i] == '\n' {
+				i += 1
+			}
+			continue
+		}
+		if i >= tlen {
+			break
+		}
+		switch c {
 		case '(':
 			tokens = append(tokens, Token{"LEFT_PAREN", "(", "null"})
 			i += 1
