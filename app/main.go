@@ -65,6 +65,15 @@ func lexer(textContent string) ([]Token, bool) {
 				tokens = append(tokens, Token{"EQUAL", "=", "null"})
 				i += 1
 			}
+		case '!':
+			next := peek(textContent, i)
+			if next == '=' {
+				tokens = append(tokens, Token{"BANG_EQUAL", "!=", "null"})
+				i += 2
+			} else {
+				tokens = append(tokens, Token{"BANG", "!", "null"})
+				i += 1
+			}
 		default:
 			hadError = true
 			fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", c) // currently just one line
