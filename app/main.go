@@ -115,6 +115,22 @@ func lexer(textContent string) ([]Token, bool) {
 				tokens = append(tokens, Token{"GREATER", ">", "null"})
 				i += 1
 			}
+		case '"':
+			start := i
+			i++
+			for i < tlen && textContent[i] != '"' {
+				i++
+			}
+			if i >= tlen || textContent[i] != '"' {
+				hadError = true
+				fmt.Fprintf(os.Stderr, "[line %s] Error: Unterminated string.", strconv.Itoa(lcnt))
+				i++
+				continue
+			}
+			stringPart := textContent[start : i+1]
+			literalPart := textContent[start+1 : i]
+			tokens = append(tokens, Token{"STRING", stringPart, literalPart})
+			i++
 		default:
 			hadError = true
 			fmt.Fprintf(os.Stderr, "[line %s] Error: Unexpected character: %c\n", strconv.Itoa(lcnt), c) // currently just one line
