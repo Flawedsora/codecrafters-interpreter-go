@@ -13,6 +13,10 @@ func lexer(textContent string) {
 			fmt.Println("LEFT_PAREN ( null")
 		} else if r == ')' {
 			fmt.Println("RIGHT_PAREN ) null")
+		} else if r == '{' {
+			fmt.Println("LEFT_BRACE { null")
+		} else if r == '}' {
+			fmt.Println("RIGHT_BRACE } null")
 		}
 	}
 	// when converted to string EOF is removed
