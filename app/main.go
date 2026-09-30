@@ -42,6 +42,81 @@ func numTransform(numberpart string) string {
 	return numberpart[0 : idx+1]
 }
 
+func reservedWords(textToken string, i int) (Token, int) {
+	// taking input string and location in string
+	// Identifier part + next char which can't be part of identifier
+	if textToken[i] == 'a' {
+		if peek(textToken, i) == 'n' && peek(textToken, i+1) == 'd' && !isAlphaNumeric(rune(peek(textToken, i+2))) {
+			return Token{"AND", "and", "null"}, i + 3
+		}
+	} else if textToken[i] == 'c' {
+		if peek(textToken, i) == 'l' && peek(textToken, i+1) == 'a' && peek(textToken, i+2) == 's' && peek(textToken, i+3) == 's' && !isAlphaNumeric(rune(peek(textToken, i+4))) {
+			return Token{"CLASS", "class", "null"}, i + 5
+		}
+	} else if textToken[i] == 'e' {
+		if peek(textToken, i) == 'l' && peek(textToken, i+1) == 's' && peek(textToken, i+2) == 'e' && !isAlphaNumeric(rune(peek(textToken, i+3))) {
+			return Token{"ELSE", "else", "null"}, i + 4
+		}
+	} else if textToken[i] == 'f' {
+		if peek(textToken, i) == 'a' {
+			if peek(textToken, i+1) == 'l' && peek(textToken, i+2) == 's' && peek(textToken, i+3) == 'e' && !isAlphaNumeric(rune(peek(textToken, i+4))) {
+				return Token{"FALSE", "false", "null"}, i + 5
+			}
+		} else if peek(textToken, i) == 'o' {
+			if peek(textToken, i+1) == 'r' && !isAlphaNumeric(rune(peek(textToken, i+2))) {
+				return Token{"FOR", "for", "null"}, i + 3
+			}
+		} else if peek(textToken, i) == 'u' {
+			if peek(textToken, i+1) == 'n' && !isAlphaNumeric(rune(peek(textToken, i+2))) {
+				return Token{"FUN", "fun", "null"}, i + 4
+			}
+		}
+	} else if textToken[i] == 'i' {
+		if peek(textToken, i) == 'f' && !isAlphaNumeric(rune(peek(textToken, i+1))) {
+			return Token{"IF", "if", "null"}, i + 2
+		}
+	} else if textToken[i] == 'n' {
+		if peek(textToken, i) == 'i' && peek(textToken, i+1) == 'l' && !isAlphaNumeric(rune(peek(textToken, i+2))) {
+			return Token{"NIL", "nil", "null"}, i + 3
+		}
+	} else if textToken[i] == 'o' {
+		if peek(textToken, i) == 'r' && !isAlphaNumeric(rune(peek(textToken, i+1))) {
+			return Token{"OR", "or", "null"}, i + 2
+		}
+	} else if textToken[i] == 'p' {
+		if peek(textToken, i) == 'r' && peek(textToken, i+1) == 'i' && peek(textToken, i+2) == 'n' && peek(textToken, i+3) == 't' && !isAlphaNumeric(rune(peek(textToken, i+4))) {
+			return Token{"PRINT", "print", "null"}, i + 5
+		}
+	} else if textToken[i] == 'r' {
+		if peek(textToken, i) == 'e' && peek(textToken, i+1) == 't' && peek(textToken, i+2) == 'u' && peek(textToken, i+3) == 'r' && peek(textToken, i+4) == 'n' && !isAlphaNumeric(rune(peek(textToken, i+5))) {
+			return Token{"RETURN", "return", "null"}, i + 6
+		}
+	} else if textToken[i] == 's' {
+		if peek(textToken, i) == 'u' && peek(textToken, i+1) == 'p' && peek(textToken, i+2) == 'e' && peek(textToken, i+3) == 'r' && !isAlphaNumeric(rune(peek(textToken, i+4))) {
+			return Token{"SUPER", "super", "null"}, i + 5
+		}
+	} else if textToken[i] == 't' {
+		if peek(textToken, i) == 'h' {
+			if peek(textToken, i+1) == 'i' && peek(textToken, i+2) == 's' && !isAlphaNumeric(rune(peek(textToken, i+3))) {
+				return Token{"THIS", "this", "null"}, i + 4
+			}
+		} else if peek(textToken, i) == 'r' {
+			if peek(textToken, i+1) == 'u' && peek(textToken, i+2) == 'e' && !isAlphaNumeric(rune(peek(textToken, i+3))) {
+				return Token{"TRUE", "true", "null"}, i + 4
+			}
+		}
+	} else if textToken[i] == 'v' {
+		if peek(textToken, i) == 'a' && peek(textToken, i+1) == 'r' && !isAlphaNumeric(rune(peek(textToken, i+2))) {
+			return Token{"VAR", "var", "null"}, i + 3
+		}
+	} else if textToken[i] == 'w' {
+		if peek(textToken, i) == 'h' && peek(textToken, i+1) == 'i' && peek(textToken, i+2) == 'l' && peek(textToken, i+3) == 'e' && !isAlphaNumeric(rune(peek(textToken, i+4))) {
+			return Token{"WHILE", "while", "null"}, i + 5
+		}
+	}
+	return Token{"", "", ""}, i
+}
+
 func lexer(textContent string) ([]Token, bool) {
 	// token_type lexeme literal
 	tokens := []Token{}
@@ -50,6 +125,12 @@ func lexer(textContent string) ([]Token, bool) {
 	lcnt := 1
 	for i := 0; i < tlen; {
 		c := textContent[i]
+		tk, nval := reservedWords(textContent, i)
+		if i != nval {
+			tokens = append(tokens, tk)
+			i = nval
+			continue
+		}
 		if isAlpha(rune(c)) {
 			start := i
 			for i < tlen && isAlphaNumeric(rune(textContent[i])) {
