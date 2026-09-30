@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Token struct {
@@ -21,9 +22,13 @@ func lexer(textContent string) ([]Token, bool) {
 	tokens := []Token{}
 	hadError := false
 	tlen := len(textContent)
+	lcnt := 1
 	for i := 0; i < tlen; {
 		c := textContent[i]
 		if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
+			if c == '\n' {
+				lcnt += 1
+			}
 			i += 1
 			continue
 		}
@@ -32,6 +37,7 @@ func lexer(textContent string) ([]Token, bool) {
 				i += 1
 			}
 			if i < tlen && textContent[i] == '\n' {
+				lcnt += 1
 				i += 1
 			}
 			continue
@@ -67,20 +73,12 @@ func lexer(textContent string) ([]Token, bool) {
 		case ';':
 			tokens = append(tokens, Token{"SEMICOLON", ";", "null"})
 			i += 1
-		case '/':
-			if peek(textContent, i) == '/' {
-				// TODO : refactor
-				for i < len(textContent) && textContent[i] != '\n' {
-					i += 1
-				}
-			} else {
-				tokens = append(tokens, Token{"SLASH", "/", "null"})
-				i += 1
-			}
 		case '*':
 			tokens = append(tokens, Token{"STAR", "*", "null"})
 			i += 1
-
+		case '/':
+			tokens = append(tokens, Token{"SLASH", "/", "null"})
+			i += 1
 		case '=':
 			next := peek(textContent, i)
 			if next == '=' {
@@ -119,7 +117,7 @@ func lexer(textContent string) ([]Token, bool) {
 			}
 		default:
 			hadError = true
-			fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", c) // currently just one line
+			fmt.Fprintf(os.Stderr, "[line %s] Error: Unexpected character: %c\n", strconv.Itoa(lcnt), c) // currently just one line
 			i += 1
 		}
 	}
