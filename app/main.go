@@ -17,6 +17,20 @@ func lexer(textContent string) {
 			fmt.Println("LEFT_BRACE { null")
 		} else if r == '}' {
 			fmt.Println("RIGHT_BRACE } null")
+		} else if r == ',' {
+			fmt.Println("COMMA , null")
+		} else if r == '.' {
+			fmt.Println("DOT . null")
+		} else if r == '-' {
+			fmt.Println("MINUS - null")
+		} else if r == '+' {
+			fmt.Println("PLUS + null")
+		} else if r == ';' {
+			fmt.Println("SEMICOLON ; null")
+		} else if r == '/' {
+			fmt.Println("SLASH / null")
+		} else if r == '*' {
+			fmt.Println("STAR * null")
 		}
 	}
 	// when converted to string EOF is removed
