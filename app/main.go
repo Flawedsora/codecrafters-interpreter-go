@@ -17,6 +17,22 @@ func peek(textContent string, i int) byte {
 	return 0
 }
 
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
+
+func numTransform(numberpart string) string {
+	// trimming logic just for decimals
+	idx := len(numberpart) - 1
+	for idx >= 0 && numberpart[idx] == '0' {
+		idx--
+	}
+	if numberpart[idx] == '.' {
+		return numberpart[0:idx+1] + "0"
+	}
+	return numberpart[0 : idx+1]
+}
+
 func lexer(textContent string) ([]Token, bool) {
 	// token_type lexeme literal
 	tokens := []Token{}
@@ -25,6 +41,30 @@ func lexer(textContent string) ([]Token, bool) {
 	lcnt := 1
 	for i := 0; i < tlen; {
 		c := textContent[i]
+		if isDigit(c) {
+			start := i
+			cntDecimal := 0
+			for i < tlen && (isDigit(textContent[i]) || textContent[i] == '.') {
+				if cntDecimal > 1 {
+					break
+				}
+				if textContent[i] == '.' {
+					cntDecimal += 1
+				}
+				i++
+			}
+			fmt.Fprintf(os.Stderr, "Value of i is %d", i)
+			numberPart := textContent[start:i]
+			var literalPart string
+			if cntDecimal == 0 {
+				literalPart = numberPart + ".0"
+			} else {
+				literalPart = numTransform(numberPart)
+			}
+			// start to end inclusive is needed
+			tokens = append(tokens, Token{"NUMBER", numberPart, literalPart})
+			continue
+		}
 		if c == ' ' || c == '\t' || c == '\r' || c == '\n' {
 			if c == '\n' {
 				lcnt += 1
