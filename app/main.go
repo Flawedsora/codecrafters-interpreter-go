@@ -5,36 +5,41 @@ import (
 	"os"
 )
 
-func lexer(textContent string) {
+type Token struct {
+	Type, Lexeme, Literal string
+}
+
+func lexer(textContent string) []Token {
 	// token_type lexeme literal
-	// just handling parenthesis
-	for _, r := range textContent {
-		if r == '(' {
-			fmt.Println("LEFT_PAREN ( null")
-		} else if r == ')' {
-			fmt.Println("RIGHT_PAREN ) null")
-		} else if r == '{' {
-			fmt.Println("LEFT_BRACE { null")
-		} else if r == '}' {
-			fmt.Println("RIGHT_BRACE } null")
-		} else if r == ',' {
-			fmt.Println("COMMA , null")
-		} else if r == '.' {
-			fmt.Println("DOT . null")
-		} else if r == '-' {
-			fmt.Println("MINUS - null")
-		} else if r == '+' {
-			fmt.Println("PLUS + null")
-		} else if r == ';' {
-			fmt.Println("SEMICOLON ; null")
-		} else if r == '/' {
-			fmt.Println("SLASH / null")
-		} else if r == '*' {
-			fmt.Println("STAR * null")
+	tokens := []Token{}
+	for i := 0; i < len(textContent); i++ {
+		switch c := textContent[i]; c {
+		case '(':
+			tokens = append(tokens, Token{"LEFT_PAREN", "(", "null"})
+		case ')':
+			tokens = append(tokens, Token{"RIGHT_PAREN", ")", "null"})
+		case '{':
+			tokens = append(tokens, Token{"LEFT_BRACE", "{", "null"})
+		case '}':
+			tokens = append(tokens, Token{"RIGHT_BRACE", "}", "null"})
+		case ',':
+			tokens = append(tokens, Token{"COMMA", ",", "null"})
+		case '.':
+			tokens = append(tokens, Token{"DOT", ".", "null"})
+		case '-':
+			tokens = append(tokens, Token{"MINUS", "-", "null"})
+		case '+':
+			tokens = append(tokens, Token{"PLUS", "+", "null"})
+		case ';':
+			tokens = append(tokens, Token{"SEMICOLON", ";", "null"})
+		case '/':
+			tokens = append(tokens, Token{"SLASH", "/", "null"})
+		case '*':
+			tokens = append(tokens, Token{"STAR", "*", "null"})
 		}
 	}
-	// when converted to string EOF is removed
-	fmt.Println("EOF  null")
+	tokens = append(tokens, Token{"EOF", "", "null"})
+	return tokens
 }
 
 func main() {
@@ -58,11 +63,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
 		os.Exit(1)
 	}
-
-	if len(fileContents) > 0 {
-		textContent := string(fileContents)
-		lexer(textContent)
-	} else {
-		fmt.Println("EOF  null") // Placeholder, replace this line when implementing the scanner
+	tokens := lexer(string(fileContents))
+	for _, t := range tokens {
+		fmt.Printf("%s %s %s\n", t.Type, t.Lexeme, t.Literal)
 	}
 }
