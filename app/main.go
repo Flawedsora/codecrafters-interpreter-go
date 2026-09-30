@@ -9,37 +9,66 @@ type Token struct {
 	Type, Lexeme, Literal string
 }
 
+func peek(textContent string, i int) byte {
+	if i+1 < len(textContent) {
+		return textContent[i+1]
+	}
+	return 0
+}
+
 func lexer(textContent string) ([]Token, bool) {
 	// token_type lexeme literal
 	tokens := []Token{}
 	hadError := false
-	for i := 0; i < len(textContent); i++ {
+	for i := 0; i < len(textContent); {
 		switch c := textContent[i]; c {
 		case '(':
 			tokens = append(tokens, Token{"LEFT_PAREN", "(", "null"})
+			i += 1
 		case ')':
 			tokens = append(tokens, Token{"RIGHT_PAREN", ")", "null"})
+			i += 1
 		case '{':
 			tokens = append(tokens, Token{"LEFT_BRACE", "{", "null"})
+			i += 1
 		case '}':
 			tokens = append(tokens, Token{"RIGHT_BRACE", "}", "null"})
+			i += 1
 		case ',':
 			tokens = append(tokens, Token{"COMMA", ",", "null"})
+			i += 1
 		case '.':
 			tokens = append(tokens, Token{"DOT", ".", "null"})
+			i += 1
 		case '-':
 			tokens = append(tokens, Token{"MINUS", "-", "null"})
+			i += 1
 		case '+':
 			tokens = append(tokens, Token{"PLUS", "+", "null"})
+			i += 1
 		case ';':
 			tokens = append(tokens, Token{"SEMICOLON", ";", "null"})
+			i += 1
 		case '/':
 			tokens = append(tokens, Token{"SLASH", "/", "null"})
+			i += 1
 		case '*':
 			tokens = append(tokens, Token{"STAR", "*", "null"})
+			i += 1
+
+		case '=':
+			next := peek(textContent, i)
+			if next == '=' {
+				tokens = append(tokens, Token{"EQUAL_EQUAL", "==", "null"})
+				i += 2
+			} else {
+				tokens = append(tokens, Token{"EQUAL", "=", "null"})
+				i += 1
+			}
 		default:
 			hadError = true
 			fmt.Fprintf(os.Stderr, "[line 1] Error: Unexpected character: %c\n", c) // currently just one line
+			i += 1
 		}
 	}
 	tokens = append(tokens, Token{"EOF", "", "null"})
