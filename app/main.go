@@ -50,8 +50,15 @@ func lexer(textContent string) ([]Token, bool) {
 			tokens = append(tokens, Token{"SEMICOLON", ";", "null"})
 			i += 1
 		case '/':
-			tokens = append(tokens, Token{"SLASH", "/", "null"})
-			i += 1
+			if peek(textContent, i) == '/' {
+				// TODO : refactor
+				for i < len(textContent) && textContent[i] != '\n' {
+					i += 1
+				}
+			} else {
+				tokens = append(tokens, Token{"SLASH", "/", "null"})
+				i += 1
+			}
 		case '*':
 			tokens = append(tokens, Token{"STAR", "*", "null"})
 			i += 1
