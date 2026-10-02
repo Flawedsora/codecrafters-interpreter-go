@@ -38,6 +38,9 @@ func main() {
 			if tok.TokenType == token.TRUE || tok.TokenType == token.FALSE || tok.TokenType == token.NIL {
 				fmt.Println(tok.Lexeme)
 			}
+			if tok.TokenType == token.NUMBER || tok.TokenType == token.STRING {
+				fmt.Println(tok.Literal)
+			}
 		}
 		if hadError {
 			os.Exit(65)
