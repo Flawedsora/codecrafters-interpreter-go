@@ -36,10 +36,19 @@ func main() {
 		// tester assuming that i just get true false nil
 		for _, tok := range tokens {
 			if tok.TokenType == token.TRUE || tok.TokenType == token.FALSE || tok.TokenType == token.NIL {
-				fmt.Println(tok.Lexeme)
+				fmt.Printf(tok.Lexeme)
 			}
 			if tok.TokenType == token.NUMBER || tok.TokenType == token.STRING {
-				fmt.Println(tok.Literal)
+				fmt.Printf("%v", tok.Literal)
+			}
+			if tok.TokenType == token.LEFTPAREN {
+				fmt.Printf("%sgroup ", tok.Lexeme)
+			}
+			if tok.TokenType == token.IDENTIFIER {
+				fmt.Printf("%s", tok.Literal)
+			}
+			if tok.TokenType == token.RIGHTPAREN {
+				fmt.Printf("%s", tok.Lexeme)
 			}
 		}
 		if hadError {
